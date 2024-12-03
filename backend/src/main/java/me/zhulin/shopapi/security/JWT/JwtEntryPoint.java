@@ -17,7 +17,6 @@ import java.io.IOException;
 @Component
 public class JwtEntryPoint implements AuthenticationEntryPoint {
 
-
     private static final Logger logger = LoggerFactory.getLogger(JwtEntryPoint.class);
 
     // called if authentication failed
@@ -28,6 +27,6 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
             throws IOException {
 
         logger.error("Unauthorized error. Message - {}", e.getMessage());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Error: Unauthorized");
     }
 }

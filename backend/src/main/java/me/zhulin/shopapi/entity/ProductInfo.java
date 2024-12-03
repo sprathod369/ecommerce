@@ -1,26 +1,30 @@
 package me.zhulin.shopapi.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-
+import java.time.LocalDateTime;
 
 @Entity
 @Data
+@NoArgsConstructor
 @DynamicUpdate
 public class ProductInfo implements Serializable {
     @Id
-    private String productId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Changed to IDENTITY for better compatibility
+    private Long productId;
 
     @NotNull
     private String productName;
@@ -37,7 +41,6 @@ public class ProductInfo implements Serializable {
     private String productIcon;
 
     /** 0: on-sale 1: off-sale */
-
     @ColumnDefault("0")
     private Integer productStatus;
 
@@ -45,9 +48,10 @@ public class ProductInfo implements Serializable {
     private Integer categoryType;
 
     @CreationTimestamp
-    private Date createTime;
+    private LocalDateTime createTime;
+
     @UpdateTimestamp
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     public ProductInfo() {
     }

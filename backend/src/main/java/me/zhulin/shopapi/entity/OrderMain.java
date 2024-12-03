@@ -25,7 +25,7 @@ public class OrderMain implements Serializable {
 
     @Id
     @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Changed to IDENTITY for better compatibility
     private Long orderId;
 
     @OneToMany(cascade = CascadeType.ALL,
@@ -67,10 +67,10 @@ public class OrderMain implements Serializable {
         this.buyerName = buyer.getName();
         this.buyerPhone = buyer.getPhone();
         this.buyerAddress = buyer.getAddress();
-        this.orderAmount = buyer.getCart().getProducts().stream().map(item -> item.getProductPrice().multiply(new BigDecimal(item.getCount())))
+        this.orderAmount = buyer.getCart().getProducts().stream()
+                .map(item -> item.getProductPrice().multiply(new BigDecimal(item.getCount())))
                 .reduce(BigDecimal::add)
-                .orElse(new BigDecimal(0));
+                .orElse(BigDecimal.ZERO);
         this.orderStatus = 0;
-
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-
 /**
  * Created By Zhu Lin on 1/1/2019.
  */
@@ -19,34 +18,35 @@ import java.util.Date;
 public class JwtProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
-    @Value("${jwtSecret}")
+
+    @Value("${jwt.secret}")
     private String jwtSecret;
-    @Value("${jwtExpiration}")
+
+    @Value("${jwt.expiration}")
     private int jwtExpiration;
 
     public String generate(Authentication authentication) {
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + jwtExpiration * 1000))
+                .setExpiration(new Date(new Date().getTime() + jwtExpiration * 1000L))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
     public boolean validate(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            logger.error("JWT Authentication Failed");
+            logger.error("JWT Authentication Failed", e);
         }
         return false;
     }
 
     public String getUserAccount(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token)
+        return Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token)
                 .getBody().getSubject();
     }
 }

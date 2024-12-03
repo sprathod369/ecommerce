@@ -16,11 +16,10 @@ import java.util.Objects;
 @NoArgsConstructor
 public class ProductInOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Changed to IDENTITY for better compatibility
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//    @JoinColumn(name = "cart_id")
     @JsonIgnore
     private Cart cart;
 
@@ -29,10 +28,8 @@ public class ProductInOrder {
     @JsonIgnore
     private OrderMain orderMain;
 
-
     @NotEmpty
     private String productId;
-
 
     @NotEmpty
     private String productName;
@@ -53,7 +50,6 @@ public class ProductInOrder {
 
     @Min(1)
     private Integer count;
-
 
     public ProductInOrder(ProductInfo productInfo, Integer quantity) {
         this.productId = productInfo.getProductId();
@@ -85,7 +81,6 @@ public class ProductInOrder {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         ProductInOrder that = (ProductInOrder) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(productId, that.productId) &&
@@ -98,7 +93,6 @@ public class ProductInOrder {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(super.hashCode(), id, productId, productName, productDescription, productIcon, categoryType, productPrice);
+        return Objects.hash(id, productId, productName, productDescription, productIcon, categoryType, productPrice);
     }
 }

@@ -18,24 +18,31 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 4887904943282174032L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Changed to IDENTITY for better compatibility
     private Long id;
 
     @NaturalId
     @NotEmpty
     private String email;
+
     @NotEmpty
     @Size(min = 3, message = "Length must be more than 3")
     private String password;
+
     @NotEmpty
     private String name;
+
     @NotEmpty
     private String phone;
+
     @NotEmpty
     private String address;
+
     @NotNull
     private boolean active;
+
     @NotEmpty
     private String role = "ROLE_CUSTOMER";
 
@@ -56,6 +63,4 @@ public class User implements Serializable {
                 ", role='" + role + '\'' +
                 '}';
     }
-
 }
-

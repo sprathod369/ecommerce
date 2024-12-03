@@ -16,13 +16,12 @@ import java.util.Set;
 public class Cart implements Serializable {
     @Id
     @NotNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Changed to IDENTITY for better compatibility
     private long cartId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JsonIgnore
-//    @JoinColumn(name = "email", referencedColumnName = "email")
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL,
@@ -39,7 +38,6 @@ public class Cart implements Serializable {
     }
 
     public Cart(User user) {
-        this.user  = user;
+        this.user = user;
     }
-
 }

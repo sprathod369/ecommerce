@@ -14,48 +14,39 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 
-/**
- * Created By Zhu Lin on 1/1/2019.
- */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtProvider jwtProvider;
+
     @Autowired
     private UserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String jwt = getToken(httpServletRequest);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String jwt = getToken(request);
         if (jwt != null && jwtProvider.validate(jwt)) {
             try {
                 String userAccount = jwtProvider.getUserAccount(jwt);
                 User user = userService.findOne(userAccount);
-                // pwd not necessary
-                // if jwt ok, then authenticate
-                SimpleGrantedAuthority sga = new SimpleGrantedAuthority(user.getRole());
-                ArrayList<SimpleGrantedAuthority> list = new ArrayList<>();
-                list.add(sga);
-                UsernamePasswordAuthenticationToken auth
-                        = new UsernamePasswordAuthenticationToken(user.getEmail(), null, list);
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(), null, Collections.singletonList(authority));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
             } catch (Exception e) {
-                logger.error("Set Authentication from JWT failed");
+                logger.error("Set Authentication from JWT failed", e);
             }
         }
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
+        filterChain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.replace("Bearer ", "");
+            return authHeader.substring(7);
         }
-
         return null;
     }
 }
